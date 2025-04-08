@@ -11,10 +11,6 @@ This project is a **full-stack Todo app** built with:
 ## 📦 Build & Run the App
 
 ### ✅ Step 1: Clone the Repository
-```bash
-git clone https://github.com/your-username/todoapp.git
-cd todoapp
-```
 
 ### ✅ Step 2: Build and Start All Services
 ```bash
