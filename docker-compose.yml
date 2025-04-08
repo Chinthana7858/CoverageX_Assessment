@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: tododb
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  backend:
+    build: ./backend
+    container_name: springbackend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/tododb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE: http://springbackend:8080
+    container_name: reactfrontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+
+  frontend-tests:
+    build: ./frontend
+    container_name: frontend_test_runner
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+    working_dir: /app
+    entrypoint: sh -c "npm install && npx vitest run"
+
+  cypress:
+    image: cypress/included:14.2.1
+    container_name: cypress_runner
+    working_dir: /e2e
+    volumes:
+      - ./frontend:/e2e
+    depends_on:
+      - frontend
+    environment:
+      - CYPRESS_baseUrl=http://reactfrontend:3000
+    networks:
+      - app-network
+    command: npx cypress run
+
+  backend-tests:
+    image: maven:3.8.5-openjdk-17
+    container_name: backend_test_runner
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: mvn test
+    depends_on:
+      - db
+    networks:
+      - app-network
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/tododb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+
+
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+
