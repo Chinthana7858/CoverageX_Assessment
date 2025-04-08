@@ -8,16 +8,44 @@ This project is a **full-stack Todo app** built with:
 - 🐳 Fully containerized using **Docker Compose**
 - ✅ Includes unit, integration, and E2E tests (Vitest, JUnit, Cypress)
 
-# 📦 Build & Run the App
-Step 1: Clone the Repository
-Step 2: Build and Start All Services - docker compose up --build
+## 📦 Build & Run the App
 
-Access the application: Open your browser and navigate to  http://localhost:3000
+### ✅ Step 1: Clone the Repository
+```bash
+git clone https://github.com/your-username/todoapp.git
+cd todoapp
+```
 
-✅ Running Tests
+### ✅ Step 2: Build and Start All Services
+```bash
+docker compose up --build
+```
+
+### 🌐 Access the Application
+Open your browser and navigate to:
+```
+http://localhost:3000
+```
+
+---
+
+## ✅ Running Tests
+
+### 🧪 Run Backend Tests
+```bash
 docker compose run --rm backend-tests
+```
+
+### 🧪 Run Frontend Unit Tests
+```bash
 docker compose run --rm frontend-tests
-docker compose run --rm frontend-tests
+```
+
+### 🧪 Run Cypress E2E Tests
+```bash
+docker compose run --rm cypress
+```
+
 
 ## ⚗️ Tech Stack
 
